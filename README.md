@@ -50,10 +50,130 @@ Ordem de como os eventos foram gerados, pois não adianta saber que temos um err
 Um erro de forma isolada, muitas vezes não vai nos dizer nada, ou seja, tracing permite **rastreabilidade**, mostrando o passo-a-passo de um requisição que entrou até chegar ao output final que terminará em um log.
 
 
+## Elastic Stack
+### Introdução ao Elastic Stack
+#### Voltando no Tempo
+ELK Stack:
+* **Elasticsearch:** é um search engine e analytics - ele analisa e busca os dados de forma muito rápida
+* **Logstash:** processador de dados através de pipelines que consegue receber, transformar e enviar dados simultaneamente - os dados são enviados para o Elasticsearch
+* **Kibana:** permite usuários a visualizarem os dados do elasticsearch em diversas perspectivas
 
 
+#### Elasticsearch
+* **Search engine e analytics:** uma vez que ele tem dados, ele consegue fazer busca de uma forma muito rápida. Trabalha com esquema de índices, os dados são um JSON e cada item desse consegue compor e fazer buscas, e com essas buscas é possível metrificar
+* **Apache Lucene:** foi criado a partir do Apache Lucene. Ou seja, Apache Lucene é o motor principal
+* **2010 - Elasticsearch N.V (Elastic):** é uma ferramenta madura e consolidada
+* **Rápido**
+* **Escalável** 
+* **API Rest**
+* **Análise e visualização geoespacial:** pode trabalhar com áreas e mapas
+* **Application, website e enterprise search:** o que colocar nos índices do Elasticsearch, ele consegue trabalhar para fazer as buscas
+* **Logging e analytics:** também faz analíses de logs. O **Kibana** tem uma área específica para fazer acompanhamento de logs
+* **Trabalha de forma distribuída através de shards que possuem redudância de dados**
+* **Pode escalar milhares de servidores e manipular petabyte de dados**
 
 
+### Mais sobre Logstash
+#### Logstash
+* **Engine coletora de dados em tempo real:** pega dados de múltiplos lugares
+* **Iniciou como manipulador de logs:** para trabalhar e organizar os dados e mandar para o Elasticsearch
+* **Trabalha com pipelines**
+* **Recebe dados de múltiplas fontes**
+* **Normaliza e transforma dados:** em tempo real
+* **Envia dados para múltiplas fontes**
+* **Plugins:** tem uma séria de plugins - porém, tem sido usada cada vez menos
+
+
+### Sobre o Kibana
+#### Kibana
+* **Ferramenta de visualização e exploração de dados** do Elasticsearch
+* **Usada com:** Logs, Análise de séries, Monitoramento de aplicações e Inteligência operacional. Já tem integração com recursos de machine learning para fazer detecção de anomalias
+* Tem a área do desenvolvedor
+* **Integrado com Elasticsearch**
+* **Agregadores e filtragem de dados**
+* **Dashboards**
+* **Gráficos interativos**
+* **Mapas**
+
+### Beats e Elastic Stack
+#### Qual a diferença entre ELK Stack e Elastic Stack?
+##### Beats
+* Beats foi anunciado em 2015
+* *Lightweight data shipper*: resumidamente é um integrador de dados leve
+ * **Obs:** cada vez mais nós temos mais lugares para pegar informações e de todos os formatos. E, por padrão, o ELK Stack estava trabalhando apenas com o Logstash e ele dá trabalho.
+* Agente Coletor de dados: o Beats pode pegar essas informações e mandar pro Logstash ou até mesmo diretamente para o Elasticsearch. 
+ * **Obs:** raramente é mandado para o Logstash. E ele está caindo em desuso
+* Integrado facilmente com Elasticsearch ou Logstash
+* **São tipos de Beats:** Logs, Métricas, Network data, Audit Data, Uptime Monitoring
+ * **Obs:** Se for pegar logs de um arquivo texto, é usado o **Filebeat**. Se quiser uma métrica, **Metricbeat**.
+* Pode criar o próprio Beat
+
+Ou seja, a diferença entre o ELK Stack e o Elastic Stack é que o Elastic Stack possui os Beats. 
+
+**Camadas Elastic Stack**
+-------- KIBANA -------
+---- ELASTICSEARCH ----
+-- BEATS -- LOGSTASH --
+
+#### Elastic
+* É o nome da empresa que está por trás das soluções - **Todas as soluções são Open Source**, porém existem alguns plugins que são licenciados pela Elastic.
+* Cloud Solution
+* Oferecem plugins e recursos licenciados
+* Produtos: 
+ * APM: Application Performance Monitoring (usado para observabilidade)
+ * Maps
+ * Site search
+ * Enterprise search
+ * App Search
+ * Infrastructure
+
+
+### Iniciando com Elasticsearch e Kibana
+* [Elastic](https://www.elastic.co/pt/)
+* [Github com Exemplos do Elastic](https://github.com/elastic/examples)
+
+#### docker-compose.yml
+São configurados dois serviços: Elasticsearch e Kibana
+* Elasticsearch:
+ * volumes: criamos uma pasta **elasticsearch_data** para ficar no nosso computador. Ou seja, toda vez que subir o Elasticsearch, não vamos perder os dados.
+ * networks: criou uma rede de **observability**, pois depois teremos outra aplicação que precisará se comunicar com a mesma rede que o Elasticsearch para conseguir monitorar
+
+* Kibana: 
+ * environment: são variáveis de ambiente importantes: URL e HOST, que é onde o Kibana vai acessar os dados do Elasticsearch:
+  * Obs: o  http://**elasticsearch**:9200 vem do nome do serviços e a porta padrão do Elasticsearch é o 9200 e o Kibana 5601
+
+**docker-compose up -d** para subir os serviços
+**docker logs elasticsearch** para ver os logs e se o elasticsearch já subiu
+Entrar no **localhost:5601** para entrar no Kibana
+
+
+### Visão geral do Kibana
+O Kibana já tem sessões específicas para tratar de Observabilidade, sendo eles:
+* Logs
+* Metrics
+* APM: referente ao tracing - Application Performance Monitoring
+* Uptime: coloca todos os serviços que queremos monitorar e fará HTTP Requests para esses serviços, dando ping, etc, para verificar se o serviço está online e caso não esteja, coloca alguns alertas.
+
+O Kibana está mostrando o **Fleet** que é uma versão beta ainda e não pode ser usado em produção ainda (até o momeneto do vídeo)
+**Fleet** garante que com um único **Beat** seja possível fazer tudo.
+
+Se quiser saber se existe algum dado no Elasticsearch e vai na aba **Discover** do **Analytics**.
+
+O Elasticsearch trabalha com índices. Esses índices vão gerando vários arquivos.
+Devemos criar **index patterns** para que o Kibana possa percorrer esses arquivos.
+
+
+### Metricbeat
+[Github Arquivo de Configuração Metricbeat](https://github.com/elastic/examples/blob/master/Reference/Beats/metricbeat.example.yml)
+
+volumes:
+**As informações do Docker ficam no docker.sock**
+Compartilhar o docker.sock do meu computador:para o contêiner
+- /var/run/docker.sock:/var/run/docker.sock
+E compartilhar o arquivo metricbeat.yml. Aqui vai pegar nosso arquivo e substituir o arquivo padrão do servidor
+- ./beats/metric/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml
+
+Na tela principal no localhost:5601, entrar em Menu -> Observability -> Metrics -> View setup instructions -> 
 
 
 
