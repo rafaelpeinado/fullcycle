@@ -147,6 +147,38 @@ São configurados dois serviços: Elasticsearch e Kibana
 Entrar no **localhost:5601** para entrar no Kibana
 
 
+### Para usuários Linux
+Olá pessoal, tudo bem?
+
+Nós modificamos as variáveis de ambiente do ElasticSearch no docker-compose.yaml, descrito na aula "Iniciando com Elasticsearch e Kibana", para ficar compatível com o ambiente Linux. As modificações estão no repositório
+
+https://github.com/codeedu/fc2-observabilidade-elastic
+
+Antes de executar o docker-compose up, crie a rede observability com o comando
+```bash
+$ docker network create observability 
+```
+
+Também é necessário criar a pasta elasticsearch_data no fc2-observabilidade-elastic na máquina local manualmente para evitar erro de permissionamento
+```bash
+$ mkdir elasticsearch_data
+```
+
+Na pasta /beats/metric execute o seguinte comando:
+```bash
+$ sudo chown root metricbeat.yml 
+```
+
+Caso ocorra o erro 
+```
+bootstrap check failure [1] of [1]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+```
+
+Execute o comando 
+```bash
+sysctl -w vm.max_map_count=262144
+```
+
 ### Visão geral do Kibana
 O Kibana já tem sessões específicas para tratar de Observabilidade, sendo eles:
 * Logs
@@ -154,7 +186,7 @@ O Kibana já tem sessões específicas para tratar de Observabilidade, sendo ele
 * APM: referente ao tracing - Application Performance Monitoring
 * Uptime: coloca todos os serviços que queremos monitorar e fará HTTP Requests para esses serviços, dando ping, etc, para verificar se o serviço está online e caso não esteja, coloca alguns alertas.
 
-O Kibana está mostrando o **Fleet** que é uma versão beta ainda e não pode ser usado em produção ainda (até o momeneto do vídeo)
+O Kibana está mostrando o **Fleet** que é uma versão beta ainda e não pode ser usado em produção ainda (até o momento do vídeo)
 **Fleet** garante que com um único **Beat** seja possível fazer tudo.
 
 Se quiser saber se existe algum dado no Elasticsearch e vai na aba **Discover** do **Analytics**.
@@ -164,7 +196,12 @@ Devemos criar **index patterns** para que o Kibana possa percorrer esses arquivo
 
 
 ### Metricbeat
+Nos ajuda a ter uma visão geral de todas as métricas que conseguimos trabalhar
+
 [Github Arquivo de Configuração Metricbeat](https://github.com/elastic/examples/blob/master/Reference/Beats/metricbeat.example.yml)
+
+* Vamos usar o [metricbeat.yml](./elastic-stack/fc2-observabilidade-elastic/beats/metric/metricbeat.yml)
+  * vamos pegar as informações dos módulos docker e do elasticsearch
 
 volumes:
 **As informações do Docker ficam no docker.sock**
@@ -176,4 +213,5 @@ E compartilhar o arquivo metricbeat.yml. Aqui vai pegar nosso arquivo e substitu
 Na tela principal no localhost:5601, entrar em Menu -> Observability -> Metrics -> View setup instructions -> 
 
 
+### Uptime e Heartbeat
 
