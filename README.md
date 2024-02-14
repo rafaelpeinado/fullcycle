@@ -256,5 +256,208 @@ Os arquivos quando baixa o Filebeat tem o nome com final .disabled. Quando fazem
 É possível mandar alertas para Teams, e-mail, etc
 
 
+## Prometheus
+[Repositório do módulo](https://github.com/codeedu/fc2-prometheus)
+
+### Prometheus
+[Prometheus](https://prometheus.io/) é usado principalmente quando falado de Kubernetes
+
+### Conceitos iniciais
+* "From metrics to insight"
+* Power your metrics and alerting with a leading open-source monitoring solution."
+
+* "Prometheus é um toolkit de monitoramento e alerta de sistema open-source"
+* Criado pela SoundCloud
+* Faz parte da Cloud Native Computing Foundation
+
+* **Dados dimensionais:** geralmente pegamos dados crus como "quantos acessos?", no Prometheus conseguimos informações com percentil, agrupamentos etc
+* **Consultas poderosas**
+* **Fácil visualização dos dados em conjunto com o Grafana:** Não visualizamos os dados do Prometheus, no Prometheus. usamos outros dashboards, como o Grafana
+* **Storage eficiente**
+* **Simples**
+* **Alerta inteligente:** é possível encadear alerta
+* **Diversidade de clients e integrações**
+
+### Dinâmica de funcionamento
+Uma forma de enviar os dados é:
+* **Aplicação** tem um **Agent** que de tempos em tempos faz um **push** para o **Serviço Monitor**
+  * Elastic Stack funciona assim
+
+A outra:
+* Temos um **Serviço Monitor** que de tempos em tempos faz um **pull** da **Aplicação** e esses dados são enviados
+  * Prometheus funciona assim
 
 
+### Prometheus vs pull
+Prometheus --- pull via http a cada x segundos --> Aplicação (endpoint /metrics)
+  * Temos que adaptar a aplicação ao formato do Prometheus
+
+
+### Dinâmica dos exporters
+Informações relevantes so negócio
+* Quantidade de compras
+* Tempo de resposta no processo de compra
+* Quantidade de usuários logados
+* Utilização de uma feature
+
+Como fazer isso no 
+* MySQL
+* nginx ./ Apache
+* Servidor Linux
+* etc
+
+#### Exportes
+Prometheus --- pull via http a cada 15s --> Exporter (/metrics) -----> Server Linux
+* 15s é um número arbitrário
+
+
+### Arquitetura do Prometheus
+[Architecture](https://prometheus.io/docs/introduction/overview/#architecture)
+<img src="https://prometheus.io/assets/architecture.png">
+
+O Prometheus server é separado em 3 principais componentes Retrieval, TSDB, HTTP Server
+* **TSDB (principal):** Time series database é um componente onde faz o processo de armazenamento das informações no formato de séries e por isso é muito rápido para consulta.
+* **Retrieval:** orquestra o processo de receber as informações que foram coletadas e mandar para o banco de dados do Prometheus.
+* **HTTP Server**
+
+* **Service Discovery:** por exemplo, quando um pod novo é criado, o Prometheus consegue acessar e pegar informações desse novo pod, isso evita a necessidade de ficar adicionando e removendo informações manualmente
+
+* **Pushgateway:** supondo que uma aplicação não é executada a todo momento ou poucas vezes, os dados dessa aplicação são enviadas para o pushgateway e depois o Prometheus captura essas informações. 
+
+* **Alertmanager:** O sistema de alertas tem que se conectar com o Prometheus
+
+
+### Trabalhando com dados
+#### Armazenamento
+* TSDB (Time series Database)
+* Armazenamento de dados que mudam conforme o tempo
+* Labels para propriedade específicas de uma determinada métrica (error_type=500)
+* Otimização específica para esse caso de uso, garantindo mais performance do que bancos de dados convencionais
+* Quanto mais novos os dados, mais precisão
+
+| Timestamp  | Erro 500 |
+| :--------: | :------: |
+| 1569419430 |    12    |
+| 1569419436 |    15    |
+| 1569419450 |    17    |
+
+Para entender a tabela, não significa que 1569419430 teve 12 erros e 1569419436 15 erros, na verdade quer dizer que entre 1569419430 e 1569419436 teve mais 3 erros, pois o erro é cumulativo conforme o tempo
+
+
+### Tipos de métricas
+4 tipos de métricas
+
+#### Counter
+* Valor incremental
+* Prometheus consegue absorver falhas no caso esse número tenha um eventual reset
+* Exemplos:
+  * Quantidade de visitas em um site
+  * Quantidade de vendas
+  * Quantidade de erros
+
+#### Gauge
+* Valor pode possuir variações com o tempo
+* Aumentar / Diminuir / Estabilizar
+* Exemplos:
+  * Quantidade de usuários online
+  * Quantidade de servidores ativos
+
+
+### Histogram
+* Distribuição de frequência
+* Medicação é baseado em amostrar
+* Consegue agregar valores
+
+### Summary
+* Muito similar ao histogram
+* Com summary os valores são calculados no servidor da aplicação não no Prometheus
+* Bom para aproximação de valores
+* Ex: request duration
+* De forma geral, é muito mais comum utilizar histogram
+
+
+### PromQL
+* Prometheus Query Language (SQL do Prometheus)
+* Exemplo:
+  * http_requests_total
+  * rate(http_requests_total[5m])
+  * http_requests_total{status!~"4..."}
+
+
+### Tour no prometheus.io
+[Documentação Prometheus](https://prometheus.io/)
+
+### Executando prometheus pela primeira vez
+[prometheus.yml](./prometheus/fc2-prometheus/prometheus.yml)
+
+### Visão geral do dashboard padrão
+* http://localhost:9090
+* http://localhost:9090/targets (Status -> Targets)
+* prometheus_http_requests_total
+* prometheus_http_requests_total{handler="/metrics"}
+* rate(prometheus_http_requests_total{handler="/metrics"}[5m])
+
+### Utilizando cAdvisor
+[cAdvisor](https://prometheus.io/docs/guides/cadvisor/)
+* Container Advisor
+* http://localhost:8080/containers/
+
+
+### Apresentando o Grafana
+* http://localhost:3000
+* Home -> Connections -> Data sources -> prometheus
+  * **Connection:** http://prometheus:9090
+* [Grafana](https://grafana.com/)
+* [Grafana Dashboards](https://grafana.com/grafana/dashboards/?search=cadvisor)
+  * Copiar o ID do Dashboard
+  * http://localhost:3000/dashboard/import
+
+Podemos alterar a Query clicando em edit no gráfico do Dashboard
+
+
+### Preparando ambiente Golang
+go mod init github.com/codeedu/fc2-prometheus
+docker exec -it app bash
+
+### Criando métrica do tipo Gauge
+go run main.go
+curl localhost:8181/metrics
+
+### Trabalhando com Counter
+[main.go](./prometheus/fc2-prometheus/main.go)
+
+### Criando histogram
+[main.go](./prometheus/fc2-prometheus/main.go)
+
+### Ativando novo target no Prometheus
+Inserir novo job no [prometheus.yml](./prometheus/fc2-prometheus/prometheus.yml)
+
+
+### Criando dashboard usando Gauge
+Home do Grafana -> Dashboard -> New Dashboard -> Add visualization
+Metric goapp_online_users
+Thresholds - para definir limites
+
+
+### Adicionando painel Counter
+Painel do tipo Stat
+
+
+### Painel com Histogram
+for i in {1..10}; do curl localhost:8181/contact; done
+
+goapp_http_request_duration_bucket{le="+Inf"}
+* **le:** less or equal
+* **+Inf:** até o valor máximo
+
+em Legend trocar por custom e escrever {{handler}} para aparecer o nome do handler
+
+
+### Configurando alerta no Grafana
+Home do Grafana -> Alerting -> Contact points -> Add contact point
+
+No Telegram iniciar uma conversa com o BotFather
+https://api.telegram.org/bot<id>/getUpdates
+
+### Disparando alarmes
+No dashboard, editar o painel e ir em alerta
