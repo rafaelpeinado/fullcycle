@@ -202,6 +202,7 @@ Nos ajuda a ter uma visão geral de todas as métricas que conseguimos trabalhar
 
 * Vamos usar o [metricbeat.yml](./elastic-stack/fc2-observabilidade-elastic/beats/metric/metricbeat.yml)
   * vamos pegar as informações dos módulos docker e do elasticsearch
+  * no [docker-compose.yaml](./elastic-stack/fc2-observabilidade-elastic/docker-compose.yaml), na configuração do metricbeat precisamos usar o user root para conseguir acessar e ler o volume informado, além disso, o volumes iremos informar o docker da máquina local para o container, assim estaremos lendo o docker da máquina local
 
 volumes:
 **As informações do Docker ficam no docker.sock**
@@ -210,8 +211,50 @@ Compartilhar o docker.sock do meu computador:para o contêiner
 E compartilhar o arquivo metricbeat.yml. Aqui vai pegar nosso arquivo e substituir o arquivo padrão do servidor
 - ./beats/metric/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml
 
-Na tela principal no localhost:5601, entrar em Menu -> Observability -> Metrics -> View setup instructions -> 
+Para verificar se o dado está sendo enviado e adicionar essa métrica devemos ir em Home -> Add data -> Docker metrics -> Module status -> Check data
+
+Em Metrics eu posso selecionar show Docker Containers e verificaremos o que está sendo executado no Docker
 
 
 ### Uptime e Heartbeat
+* **Heartbeat:** Ajuda a monitorar se a aplicação está ou não de pé
+
+[O que é ICMP?](https://aws.amazon.com/pt/what-is/icmp/)
+
+
+### Configurando APM
+* **Application Performance Monitoring (APM):** nos permite trabalhar com rastreabilidade
+
+* [apm-server.yml](./elastic-stack/fc2-observabilidade-elastic/apm/apm-server.yml):
+  * o parâmetro rum (Real User Monitoring) nos ajuda a gerar rastreabilidade do backend para o frontend
+
+
+### APM na prática
+[Get started with application traces and APM](https://www.elastic.co/guide/en/observability/current/traces-get-started.html)
+
+* O RUM consegue associar a chamada do frontend com o backend
+
+### Logs no APM
+* [LOGGING](./elastic-stack/fc2-observabilidade-elastic/app/codeprogress/settings.py)
+
+
+### Configurando nginx
+**Filebeat:** passamos as URLs que queremos que faça o monitoramento e toda vez que tivermos uma modificação naquele conteúdo, ele manda para o ElasticSearch
+
+
+### Configurando Filebeat
+Os arquivos quando baixa o Filebeat tem o nome com final .disabled. Quando fazemos a ativação com filebeat modules enable nginx, igual no arquivo [entrypoint.sh](./elastic-stack/fc2-observabilidade-elastic/nginx/entrypoint.sh)
+
+
+### Fazendo deploy na Elastic Cloud
+[Elastic Cloud](https://www.elastic.co/pt/cloud)
+
+### Configurando Filebeat na Elastic Cloud
+É possível fazer a configuração pelo CloudID no arquivo do filebeat.yml no parâmetros cloud.id e cloud.auth e basta fazer o build da imagem do Docker e ele irá subir o dashboard no Kibana
+
+### Integrando serviços na Elastic Cloud
+É possível mandar alertas para Teams, e-mail, etc
+
+
+
 
