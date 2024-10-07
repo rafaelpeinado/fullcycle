@@ -228,5 +228,8 @@ CMD ["tail", "-f", "/dev/null"]
 ### Definindo interface
 - **struct:** não temos classes, temos structs que montam a estrutura de um objeto
 - Não precisamos informar ao Go que estamos implementando uma interface, só a partir da Interface ele já implementa
+- Enable = public enable() {}
+- enable = private enable() {}
+
 
 
