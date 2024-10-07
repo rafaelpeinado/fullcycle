@@ -232,4 +232,7 @@ CMD ["tail", "-f", "/dev/null"]
 - enable = private enable() {}
 
 
+### Definindo interfaces de serviços e persistência
+- p ***Product**: Os ponteiros passam a localização de onde o objeto está guardado, do que o valor em si
+- **&product:** retorna o ponteiro
 
