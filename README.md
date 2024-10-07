@@ -188,4 +188,45 @@ Toda vez que temos uma classe que for instanciada dentro de outra classe, nós g
 * A Hexagonal não define o centro, só a ideia do princípio de fazer a separação 
 
 
+## Arquitetura Hexagonal na Prática
+### Repositório do projeto
+* [fc2-arquitetura-hexagonal](https://github.com/codeedu/fc2-arquitetura-hexagonal)
+
+### Links úteis para esse capítulo
+``` dockerfile
+FROM golang:1.16
+
+WORKDIR /go/src
+ENV PATH="/go/bin:${PATH}"
+
+RUN go get -u github.com/spf13/cobra@latest && \
+    go install github.com/golang/mock/mockgen@v1.5.0 && \
+    go install github.com/spf13/cobra-cli@latest
+
+RUN apt-get update && apt-get install sqlite3 -y
+
+RUN usermod -u 1000 www-data
+RUN mkdir -p /var/www/.cache
+RUN chown -R www-data:www-data /go
+RUN chown -R www-data:www-data /var/www/.cache
+USER www-data
+
+CMD ["tail", "-f", "/dev/null"]
+```
+
+* [Vídeo - Aprenda a trabalhar com ponteiros usando Golang](https://www.youtube.com/watch?v=-FiBp1OeZF0)
+
+
+### Setando ambiente
+* docker-compose up -d
+* docker-compose ps
+* docker exec -it appproduct bash
+
+* go mod init github.com/rafaelpeinado/go-hexagonal
+
+
+### Definindo interface
+- **struct:** não temos classes, temos structs que montam a estrutura de um objeto
+- Não precisamos informar ao Go que estamos implementando uma interface, só a partir da Interface ele já implementa
+
 
