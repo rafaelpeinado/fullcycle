@@ -236,3 +236,19 @@ CMD ["tail", "-f", "/dev/null"]
 - p ***Product**: Os ponteiros passam a localização de onde o objeto está guardado, do que o valor em si
 - **&product:** retorna o ponteiro
 
+
+### Trabalhando com gomock e mockgen
+- mockgen: gera, baseado nas nossas interfaces, as interfaces de produtos, persistência para que seja possível simular os dados
+
+``` bash
+mockgen -destination=application/mock/application.go -source=application/product.go application
+```
+
+- **gomock:** utiliza um controlador para gerenciar todo os processos
+  - **defer:** espera tudo o que está acontecendo dentro do método para depois ele executar o defer
+
+
+### Finalizando implementações do service
+
+
+
