@@ -248,7 +248,32 @@ mockgen -destination=application/mock/application.go -source=application/product
   - **defer:** espera tudo o que está acontecendo dentro do método para depois ele executar o defer
 
 
-### Finalizando implementações do service
+### Iniciando criação do adapter Db
+- Terminamos o domínio da aplicação e ela pode rodar em qualquer lugar agora
+- Sendo assim, agora vamos implementar os adapters
+
+
+### Preparando testes de banco de dados
+``` bash
+apt-get update
+apt-get install sqlite3
+touch sqlite.db
+sqlite3 sqlite.db
+create table product(id string, name string, price float, status string);
+.tables
+```
+
+* Db, _ = sql.Open("sqlite3", ":memory:")
+  * memory: cria um banco de dados em memória para testar
+
+
+### Criando testes do método Get
+``` bash
+go test ./...
+```
+
+
+
 
 
 
