@@ -279,7 +279,5 @@ go run main.go
 ```
 
 
-### Considerações sobre adapters
-
 
 
