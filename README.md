@@ -279,5 +279,31 @@ go run main.go
 ```
 
 
+### Implementando CLI com Cobra
+```bash
+cobra init --pkg-name=github.com/rafaelpeinado/go-hexagonal
+go run main.go
+go mod tidy
+go run main.go
+cobra add cli
+go run main.go cli
+```
+
+- Cobra é usado para criar linhas de comando
+- [cli.go](./fc2-arquitetura-hexagonal-main/cmd/cli.go)
+
+```go
+cliCmd.Flags().StringVarP(&action, "action", "a", "enable", "Enable / Disable a product")
+```
+
+
+### Exibindo resultado e considerações
+- O ponto principal da Arquitetura Hexagonal é que ao isolar o domínio e desenvolvê-lo com cuidado, tudo o que for necessário inserir de adapter será simples. Basta acoplar no projeto
+
+
+
+
+
+
 
 
