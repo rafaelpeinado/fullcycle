@@ -259,7 +259,7 @@ apt-get update
 apt-get install sqlite3
 touch sqlite.db
 sqlite3 sqlite.db
-create table product(id string, name string, price float, status string);
+create table products(id string, name string, price float, status string);
 .tables
 ```
 
@@ -273,7 +273,13 @@ go test ./...
 ```
 
 
+### Testando Service com DbAdapter
+```bash
+go run main.go
+```
 
+
+### Considerações sobre adapters
 
 
 
