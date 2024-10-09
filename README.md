@@ -330,7 +330,3 @@ go run main.go http
 ```
 
 - O testes foram feitos via Postman
-
-
-### Enable e Disable Handlers e considerações finais
-
