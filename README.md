@@ -301,9 +301,12 @@ cliCmd.Flags().StringVarP(&action, "action", "a", "enable", "Enable / Disable a 
 - O ponto principal da Arquitetura Hexagonal é que ao isolar o domínio e desenvolvê-lo com cuidado, tudo o que for necessário inserir de adapter será simples. Basta acoplar no projeto
 
 
+### Criando servidor web
+* **Gorilla Mux:** trabalha como um roteador
+* **Negroni:** será o middleware de logs
 
 
-
+### Iniciando implementação dos handlers
 
 
 
