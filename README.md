@@ -307,6 +307,24 @@ cliCmd.Flags().StringVarP(&action, "action", "a", "enable", "Enable / Disable a 
 
 
 ### Iniciando implementação dos handlers
+- [](./pratica/adapters/web/handler/product.go)
+
+
+### Executando webserver
+
+```bash
+cobra add http
+```
+
+- [http.go](./fc2-arquitetura-hexagonal-main/cmd/http.go)
+
+
+### Trabalhando com DTO
+- Podemos pegar um dado vindo direto do servidor totalmente diferente daqueles que vamos usar nos serviços e para isso usamos DTO (Data Transfer Object)
+
+
+
+
 
 
 
