@@ -323,8 +323,14 @@ cobra add http
 - Podemos pegar um dado vindo direto do servidor totalmente diferente daqueles que vamos usar nos serviços e para isso usamos DTO (Data Transfer Object)
 
 
+### Testando processo de criação
+
+```bash
+go run main.go http
+```
+
+- O testes foram feitos via Postman
 
 
-
-
+### Enable e Disable Handlers e considerações finais
 
